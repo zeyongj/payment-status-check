@@ -1,4 +1,12 @@
-export type EncodingChoice = 'auto' | 'utf-8' | 'windows-1252' | 'macintosh' | 'gb18030' | 'big5';
+export type EncodingChoice =
+  | 'auto'
+  | 'utf-8'
+  | 'windows-1252'
+  | 'macintosh'
+  | 'cp437'
+  | 'cp850'
+  | 'gb18030'
+  | 'big5';
 export interface ParsedSheet {
   name: string;
   rows: string[][];

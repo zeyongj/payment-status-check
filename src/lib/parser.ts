@@ -60,11 +60,39 @@ const aliases: Record<Exclude<keyof ColumnMapping, 'headerRow'>, string[]> = {
   vendor: ['vendor', 'vendorname', 'supplier', 'suppliername', '供应商'],
 };
 
+// Microsoft OEM mappings, bytes 0x80–0xFF. ASCII/control bytes remain unchanged.
+// These small tables avoid loading every SheetJS legacy code page in the browser.
+// https://www.unicode.org/Public/MAPPINGS/VENDORS/MICSFT/PC/CP437.TXT
+// https://www.unicode.org/Public/MAPPINGS/VENDORS/MICSFT/PC/CP850.TXT
+const DOS_HIGH_CHARS = {
+  cp437:
+    'ÇüéâäàåçêëèïîìÄÅÉæÆôöòûùÿÖÜ¢£¥₧ƒáíóúñÑªº¿⌐¬½¼¡«»░▒▓│┤╡╢╖╕╣║╗╝╜╛┐└┴┬├─┼╞╟╚╔╩╦╠═╬╧╨╤╥╙╘╒╓╫╪┘┌█▄▌▐▀αßΓπΣσµτΦΘΩδ∞φε∩≡±≥≤⌠⌡÷≈°∙·√ⁿ²■\u00a0',
+  cp850:
+    'ÇüéâäàåçêëèïîìÄÅÉæÆôöòûùÿÖÜø£Ø×ƒáíóúñÑªº¿®¬½¼¡«»░▒▓│┤ÁÂÀ©╣║╗╝¢¥┐└┴┬├─┼ãÃ╚╔╩╦╠═╬¤ðÐÊËÈıÍÎÏ┘┌█▄¦Ì▀ÓßÔÒõÕµþÞÚÛÙýÝ¯´\u00ad±‗¾¶§÷¸°¨·¹³²■\u00a0',
+};
+
+function decodeDOS(bytes: Uint8Array, encoding: 'cp437' | 'cp850'): string {
+  const table = DOS_HIGH_CHARS[encoding];
+  const chunks: string[] = [];
+  const characters = new Uint16Array(8192);
+  for (let start = 0; start < bytes.length; start += characters.length) {
+    const length = Math.min(characters.length, bytes.length - start);
+    for (let index = 0; index < length; index++) {
+      const byte = bytes[start + index];
+      characters[index] = byte < 128 ? byte : table.charCodeAt(byte - 128);
+    }
+    chunks.push(String.fromCharCode(...characters.subarray(0, length)));
+  }
+  return chunks.join('');
+}
+
 /** Decode each CSV independently. A Windows export and Mac export can coexist. */
 export function decodeCSV(
   bytes: Uint8Array,
   choice: EncodingChoice = 'auto',
 ): { text: string; encoding: string; warnings: string[] } {
+  if (choice === 'cp437' || choice === 'cp850')
+    return { text: decodeDOS(bytes, choice), encoding: choice, warnings: [] };
   if (choice !== 'auto')
     return {
       text: new TextDecoder(choice, { fatal: true }).decode(bytes),
@@ -96,7 +124,7 @@ export function decodeCSV(
     text: encoding === 'macintosh' ? mac : win,
     encoding,
     warnings: [
-      `Legacy CSV encoding detected: ${encoding}. Check the preview; choose another encoding if accents or spaces look wrong.`,
+      `Legacy CSV encoding is uncertain; the preview uses ${encoding}. For Excel CSV (MS-DOS), select CP437 or CP850 when appropriate. Check accented characters, invoice suffixes, and spaces before running.`,
     ],
   };
 }

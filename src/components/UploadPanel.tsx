@@ -236,7 +236,15 @@ export function UploadPanel({
                     <option value="utf-8">UTF-8</option>
                     <option value="macintosh">Mac Roman</option>
                     <option value="windows-1252">Windows-1252</option>
-                    <option value="gb18030">GB18030</option>
+                    <option value="cp437">
+                      {lang === 'en' ? 'MS-DOS CP437 (US)' : 'MS-DOS CP437（美国）'}
+                    </option>
+                    <option value="cp850">
+                      {lang === 'en' ? 'MS-DOS CP850 (Western Europe)' : 'MS-DOS CP850（西欧）'}
+                    </option>
+                    <option value="gb18030">
+                      {lang === 'en' ? 'GB18030 / GBK (Chinese)' : 'GB18030 / GBK（简体中文）'}
+                    </option>
                     <option value="big5">Big5</option>
                   </select>
                 </label>

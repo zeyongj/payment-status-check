@@ -35,6 +35,50 @@ describe('CSV and Excel ingestion', () => {
     expect(decodeCSV(bytes, 'windows-1252').text).toContain('TEST-42ÊA');
     expect(parseBytes(bytes, 'invoices.csv').sheets[0].rows[1][0]).toBe('TEST-42\u00a0A');
   });
+  it('decodes MS-DOS CP437 accents and box characters without changing ASCII CSV structure', () => {
+    const bytes = Uint8Array.from([
+      ...new TextEncoder().encode('Invoice No,Invoice Notes\r\n000012,"Caf'),
+      0x82,
+      ...new TextEncoder().encode(', '),
+      0xb3,
+      0xc4,
+      0xda,
+      ...new TextEncoder().encode('\r\nsecond line"'),
+    ]);
+    expect(decodeCSV(bytes, 'cp437').text).toContain('Café, │─┌\r\nsecond line');
+    const file = parseBytes(bytes, 'dos.csv', 'cp437');
+    const extracted = extractRecords(file, { Sheet1: suggestMapping(file.sheets[0]) }, 'system');
+    expect(file.encoding).toBe('cp437');
+    expect(extracted.records[0].invoice).toBe('000012');
+    expect(extracted.records[0].notes.replace(/\r\n/g, '\n')).toBe('Café, │─┌\nsecond line');
+  });
+  it('distinguishes CP850 from CP437 and never guesses DOS from ambiguous legacy bytes', () => {
+    const bytes = Uint8Array.from([
+      ...new TextEncoder().encode('Invoice No,Invoice Notes\r\n000012,"'),
+      0x82,
+      0x9b,
+      ...new TextEncoder().encode('"'),
+    ]);
+    const file = parseBytes(bytes, 'dos.csv', 'cp850');
+    expect(file.sheets[0].rows[1]).toEqual(['000012', 'éø']);
+    expect(decodeCSV(bytes, 'cp437').text).toContain('é¢');
+    const automatic = decodeCSV(bytes);
+    expect(automatic.encoding).toBe('windows-1252');
+    expect(automatic.warnings.join(' ')).toContain('uncertain');
+    expect(automatic.warnings.join(' ')).toContain('CP437 or CP850');
+  });
+  it('keeps every ASCII byte and OEM terminal character across decoder chunk boundaries', () => {
+    const ascii = Uint8Array.from({ length: 128 }, (_, index) => index);
+    const asciiText = String.fromCharCode(...ascii);
+    for (const encoding of ['cp437', 'cp850'] as const) {
+      expect(decodeCSV(ascii, encoding).text).toBe(asciiText);
+      const bytes = new Uint8Array(8194).fill(65);
+      bytes[8191] = 0x82;
+      bytes[8192] = 0xff;
+      bytes[8193] = 0xfd;
+      expect(decodeCSV(bytes, encoding).text.slice(-3)).toBe('é\u00a0²');
+    }
+  });
   it('preserves CSV leading zeros and quoted multiline notes', () => {
     const text = 'Invoice No,Invoice Notes,Status\r\n000012,"first\nsecond",PAID';
     const file = parseBytes(new TextEncoder().encode(text), 'example.csv');
