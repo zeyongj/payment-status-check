@@ -34,3 +34,5 @@ Automated regression coverage includes:
 - Config validation, request size limits, private storage paths and strong ETag concurrency.
 
 The Vercel production build and emitted API module boot check are also verified. Browser checks cover sample reconciliation, split-record review, both download formats, actual attachment uploads, language switching and responsive layout. Owner/admin mutation handlers are covered by service tests; an interactive owner sign-in requires the account holder’s existing session.
+
+The Windows CSV update adds byte-level CP437/CP850 regression checks and compares their non-ASCII mappings against the SheetJS code-page decoder. A template integration test reads all four published template assets, preserves leading-zero identifiers and validates both summary policies.

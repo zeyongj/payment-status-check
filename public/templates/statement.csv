@@ -1,0 +1,4 @@
+﻿"Invoices","Project number","Balance","Notes"
+"000101","1001","125.5","Example outstanding invoice"
+"INV-002","1001","240","Example follow-up"
+"INV-003","1002","80.75","Example awaiting approval"

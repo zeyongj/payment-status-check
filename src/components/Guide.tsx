@@ -23,9 +23,9 @@ export function Guide({ lang }: { lang: Lang }) {
           {
             icon: BookOpen,
             title: '2. Check encoding and extraction',
-            text: 'CSV encoding is detected automatically, with a manual override for UTF-8, Mac Roman, Windows-1252, GB18030 and Big5. Your supplied Mac-exported files contain Mac Roman nonbreaking spaces, which cause the original UTF-8 decoding error.',
+            text: 'CSV encoding is detected automatically where possible. Excel CSV (MS-DOS) is supported: choose MS-DOS CP437 (US) or CP850 (Western Europe) for accented characters and check the preview. UTF-8, Mac Roman, Windows-1252, GB18030/GBK and Big5 are also available.',
             details:
-              'Review the original cell preview and extracted row count before running. Outstanding-only filtering applies when a balance column is mapped; otherwise every valid invoice row is included. Credits can be included separately. PDF scans, images, password-protected workbooks and arbitrary unstructured statements need an invoice table extracted first. Formatting differences cannot always be resolved automatically.',
+              'Legacy CSV does not reliably identify its code page; it depends on the export locale. Prefer CSV UTF-8 or XLSX for new exports. Review the original cell preview and extracted row count before running. Outstanding-only filtering applies when a balance column is mapped; otherwise every valid invoice row is included. Credits can be included separately. PDF scans, images, password-protected workbooks and arbitrary unstructured statements need an invoice table extracted first. Formatting differences cannot always be resolved automatically.',
           },
           {
             icon: GitCompareArrows,
@@ -67,9 +67,9 @@ export function Guide({ lang }: { lang: Lang }) {
           {
             icon: BookOpen,
             title: '2. 检查编码和提取结果',
-            text: 'CSV 支持自动检测及手动选择 UTF-8、Mac Roman、Windows-1252、GB18030、Big5。你提供的 Mac 导出文件含有 Mac Roman 不换行空格，直接按 UTF-8 读取会触发原来的报错。',
+            text: '支持 Excel 的 CSV（MS-DOS）。有重音字符时，请在编码中选择 MS-DOS CP437（美国）或 CP850（西欧），并检查预览。也支持 UTF-8、Mac Roman、Windows-1252、GB18030/GBK 和 Big5。',
             details:
-              '运行前请检查原始单元格预览及提取记录数。仅未结余额选项在存在余额列时生效，否则保留所有有效发票行；贷项可单独选择包含。PDF 扫描件、图片、加密工作簿或任意非结构化对账单，需要先提取为发票表格。格式差异无法保证全部自动解决。',
+              '旧式 CSV 无法可靠标明编码，具体取决于导出时的区域设置；新文件建议使用 CSV UTF-8 或 XLSX。运行前请检查原始单元格预览及提取记录数。仅未结余额选项在存在余额列时生效，否则保留所有有效发票行；贷项可单独选择包含。PDF 扫描件、图片、加密工作簿或任意非结构化对账单，需要先提取为发票表格。格式差异无法保证全部自动解决。',
           },
           {
             icon: GitCompareArrows,

@@ -45,6 +45,7 @@ import { UploadPanel, makeInput, recordsFrom, type InputState } from './componen
 import { Modal } from './components/Modal';
 import { Guide } from './components/Guide';
 import Directory from './components/Directory';
+import { Templates } from './components/Templates';
 
 type Page = 'workbench' | 'results' | 'directory' | 'guide';
 type Config = Pick<MatchSettings, 'ap' | 'pm'>;
@@ -96,7 +97,7 @@ function demoFiles(): [ParsedFile, ParsedFile] {
 export default function App() {
   const [lang, setLang] = useState<Lang>(() => {
     try {
-      return localStorage.getItem('invoice-check-language') === 'zh' ? 'zh' : 'en';
+      return localStorage.getItem('payment-status-check-language') === 'zh' ? 'zh' : 'en';
     } catch {
       return 'en';
     }
@@ -138,6 +139,7 @@ export default function App() {
     [reviewId, setReviewId] = useState(''),
     [candidateIds, setCandidateIds] = useState<string[]>([]),
     [reviewSearch, setReviewSearch] = useState('');
+  const [templatesOpen, setTemplatesOpen] = useState(false);
   const workerRef = useRef<Worker | null>(null);
   const lastIdentity = useRef<string | null>(null);
   const cancelRun = () => {
@@ -149,7 +151,7 @@ export default function App() {
   useEffect(() => {
     document.documentElement.lang = lang === 'en' ? 'en' : 'zh-Hans';
     try {
-      localStorage.setItem('invoice-check-language', lang);
+      localStorage.setItem('payment-status-check-language', lang);
     } catch {
       /* preference storage may be disabled */
     }
@@ -383,7 +385,7 @@ export default function App() {
             <FileCheck2 size={24} />
           </span>
           <span>
-            Invoice<span>Check</span>
+            Payment Status <span>Check</span>
             <small>{t.workspace}</small>
           </span>
         </a>
@@ -488,11 +490,17 @@ export default function App() {
                 <h1>{t.headline}</h1>
                 <p>{t.subtitle}</p>
               </div>
-              <button onClick={loadDemo}>
-                <Sparkles size={16} />
-                {t.demo}
-                <ArrowRight size={15} />
-              </button>
+              <div className="hero-actions">
+                <button onClick={() => setTemplatesOpen(true)}>
+                  <FileSpreadsheet size={16} />
+                  {t.templates}
+                </button>
+                <button onClick={loadDemo}>
+                  <Sparkles size={16} />
+                  {t.demo}
+                  <ArrowRight size={15} />
+                </button>
+              </div>
             </div>
             <div className="workflow-track">
               <span className="current">
@@ -722,28 +730,32 @@ export default function App() {
                       {lang === 'en' ? 'Ready to reconcile' : '准备开始核对'}
                     </div>
                   </div>
-                  <h2>{t.ready}</h2>
-                  <p>{t.readySub}</p>
-                  <div className="outcome-feature">
-                    <GitCompareArrows size={18} />
-                    <div>
-                      <h4>{t.precise}</h4>
-                      <p>{t.preciseSub}</p>
+                  <h2>{t.formatTitle}</h2>
+                  <p>{t.formatLead}</p>
+                  <div className="format-overview">
+                    <div className="format-item">
+                      <strong>
+                        <span>01</span>
+                        {t.statement}
+                      </strong>
+                      <p>{t.statementFormat}</p>
+                      <code>Invoices · Project number · Balance · Notes</code>
                     </div>
-                  </div>
-                  <div className="outcome-feature">
-                    <Users size={18} />
-                    <div>
-                      <h4>{t.splitTitle}</h4>
-                      <p>{t.splitSub}</p>
+                    <div className="format-item">
+                      <strong>
+                        <span>02</span>
+                        {t.system}
+                      </strong>
+                      <p>{t.systemFormat}</p>
+                      <code>Invoice No · Stage / Status · Company · Invoice Notes</code>
                     </div>
-                  </div>
-                  <div className="outcome-feature">
-                    <Download size={18} />
-                    <div>
-                      <h4>{t.exportTitle}</h4>
-                      <p>{t.exportSub}</p>
-                    </div>
+                    <p className="format-tip">{t.formatTip}</p>
+                    <button className="primary" onClick={() => setTemplatesOpen(true)}>
+                      <FileSpreadsheet size={16} />
+                      {t.viewTemplates}
+                      <ArrowRight size={15} />
+                    </button>
+                    <small>{t.templateFormats}</small>
                   </div>
                 </div>
                 <button className="help-link" onClick={() => setPage('guide')}>
@@ -1031,11 +1043,26 @@ export default function App() {
             }}
           />
         </div>
-        {page === 'guide' && <Guide lang={lang} />}
+        {page === 'guide' && (
+          <>
+            <div className="guide-template-link">
+              <FileSpreadsheet size={19} />
+              <div>
+                <strong>{t.templates}</strong>
+                <p>{t.templatesHelp}</p>
+              </div>
+              <button onClick={() => setTemplatesOpen(true)}>
+                {t.viewTemplates}
+                <ArrowRight size={14} />
+              </button>
+            </div>
+            <Guide lang={lang} />
+          </>
+        )}
       </main>
       <footer>
         <span>
-          InvoiceCheck <span>·</span> {t.footer}
+          Payment Status Check <span>·</span> {t.footer}
         </span>
         <div>
           <span className="status-dot" />
@@ -1047,6 +1074,11 @@ export default function App() {
           )}
         </div>
       </footer>
+      {templatesOpen && (
+        <Modal title={t.templates} onClose={() => setTemplatesOpen(false)} wide>
+          <Templates lang={lang} />
+        </Modal>
+      )}
       {reviewOpen && (
         <Modal title={t.reviewMatch} onClose={() => setReviewOpen(false)} wide>
           <p className="muted">{t.exceptionHelp}</p>

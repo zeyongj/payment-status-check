@@ -1,0 +1,18 @@
+{
+  "statement": {
+    "headers": ["Invoices", "Project number", "Balance", "Notes"],
+    "rows": [
+      ["000101", "1001", 125.5, "Example outstanding invoice"],
+      ["INV-002", "1001", 240, "Example follow-up"],
+      ["INV-003", "1002", 80.75, "Example awaiting approval"]
+    ]
+  },
+  "system": {
+    "headers": ["Invoice No", "Company", "Stage", "Status", "Invoice Notes"],
+    "rows": [
+      ["000101", "[1001] Example building A", "PAID", "", "Example payment reference"],
+      ["INV-002", "[1001] Example building A", "AP", "", "Example ready for payment"],
+      ["INV-003 [1002]", "[1002] Example building B", "SCAN", "", "Example: work order required"]
+    ]
+  }
+}

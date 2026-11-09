@@ -1,4 +1,4 @@
-# Invoice Check — User manual / 使用手册
+# Payment Status Check — User manual / 使用手册
 
 ## English
 
@@ -52,3 +52,21 @@ CSV 编码与运行 Python 的操作系统无关。附件中的 Mac Roman 不换
 
 原始对账单可自动识别常见表头、分组及合计，但无法保证识别所有 vendor 的任意排版。请检查映射及数量。图片、扫描 PDF、加密工作簿和非结构化文件需要先提取成表格；此前转换已丢失的前导零无法恢复。
 
+
+## Templates / 文件模板
+
+Use **Formats & templates** on the homepage or the User guide page to preview both file schemas and download CSV or XLSX examples. Templates use fictional data. Keep invoice numbers as text to preserve leading zeros. Recognized original statements can be uploaded directly; the templates are optional.
+
+- Vendor statement: `Invoices` is required; `Project number`, `Balance` and `Notes` are optional.
+- System export: `Invoice No` is required; include `Stage` or `Status` for a payment result. `Company` and `Invoice Notes` are optional context. Unfamiliar column names can be mapped after upload.
+
+首页及使用手册均提供**文件格式与模板**入口，可查看列要求并下载 CSV 或 XLSX 虚构示例。发票号码请设为文本以保留前导零。已识别的原始 statement 可直接上传，不要求先套用模板。
+
+- 供应商对账单：必须有 `Invoices`；可选 `Project number`、`Balance`、`Notes`。
+- 系统导出：必须有 `Invoice No`；请提供 `Stage` 或 `Status` 以得到付款结果。可选 `Company`、`Invoice Notes`。其他列名可在上传后映射。
+
+### Windows CSV (MS-DOS) / Windows MS-DOS CSV
+
+Excel CSV (MS-DOS) is supported. Plain ASCII works automatically. For accented characters, select MS-DOS CP437 (US) or CP850 (Western Europe) under each file’s CSV encoding selector and verify the preview. Chinese exports may need GB18030/GBK or Big5. Code pages depend on the export locale, and a legacy CSV cannot reliably identify its own encoding. Prefer CSV UTF-8 or XLSX for new exports.
+
+支持 Excel 的 CSV（MS-DOS）。纯英文数字通常可自动读取；有重音字符时，请在每份文件的 CSV 编码选项中选择 MS-DOS CP437（美国）或 CP850（西欧），并检查预览。中文导出可能需要 GB18030/GBK 或 Big5。编码取决于导出时的区域设置，旧式 CSV 不能可靠地标明自身编码；新文件建议选择 CSV UTF-8 或 XLSX。
