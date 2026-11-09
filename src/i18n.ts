@@ -1,7 +1,6 @@
 export type Lang = 'en' | 'zh';
 export const words = {
   en: {
-    workspace: 'RANCHO WORKSPACE',
     workbench: 'Reconcile',
     results: 'Payment summaries',
     directory: 'Team directory',
@@ -165,7 +164,6 @@ export const words = {
     next: 'Next',
   },
   zh: {
-    workspace: 'RANCHO 工作空间',
     workbench: '发票核对',
     results: '付款状态汇总',
     directory: '团队分配',

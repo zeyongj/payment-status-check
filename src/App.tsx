@@ -386,7 +386,6 @@ export default function App() {
           </span>
           <span>
             Payment Status <span>Check</span>
-            <small>{t.workspace}</small>
           </span>
         </a>
         <div className="top-actions">
@@ -1063,6 +1062,7 @@ export default function App() {
       <footer>
         <span>
           Payment Status Check <span>·</span> {t.footer}
+          <small className="copyright">© 2026 Zeyong Jin. All Rights Reserved.</small>
         </span>
         <div>
           <span className="status-dot" />

@@ -264,15 +264,6 @@ a {
 .brand > span > span {
   color: var(--blue);
 }
-.brand small {
-  display: block;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 8px;
-  font-weight: 650;
-  letter-spacing: 1.9px;
-  color: #91a0b4;
-  margin-top: 3px;
-}
 .brand-icon {
   display: grid;
   place-items: center;
@@ -1517,6 +1508,13 @@ footer > span > span {
   padding: 0 7px;
   color: #c3cbd7;
 }
+footer .copyright {
+  display: block;
+  margin-top: 6px;
+  color: #8292a8;
+  font-size: 10px;
+  line-height: 1.5;
+}
 footer > div {
   display: flex;
   align-items: center;
@@ -1679,10 +1677,6 @@ footer .text-button {
     width: 35px;
     height: 35px;
     border-radius: 10px;
-  }
-  .brand small {
-    font-size: 6px;
-    letter-spacing: 1.5px;
   }
   .top-actions {
     gap: 7px;
