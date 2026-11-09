@@ -40,7 +40,7 @@ import type {
   SummaryRow,
 } from './lib';
 import { words, type Lang } from './i18n';
-import { useIdentity } from './main';
+import { useIdentity } from './auth/Identity';
 import { UploadPanel, makeInput, recordsFrom, type InputState } from './components/UploadPanel';
 import { Modal } from './components/Modal';
 import { Guide } from './components/Guide';

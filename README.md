@@ -2,7 +2,7 @@
 
 A browser-based workspace for checking outstanding vendor invoices against an Inqflow export. The interface follows AP Count’s blue-and-white workspace, with English as the default and a Chinese language switch.
 
-- **Website:** https://invoice-check.vercel.app
+- **Website:** https://invoice-check-chi.vercel.app
 - **User manual:** Open **User guide / 使用手册** in the website, or read [the bilingual manual](docs/MANUAL.md).
 - **Hosting:** Vercel Hobby, with the existing Clerk sign-in and a separate private settings store.
 

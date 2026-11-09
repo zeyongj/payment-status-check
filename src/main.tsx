@@ -1,22 +1,9 @@
-import React, { createContext, useContext } from 'react';
+import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { ClerkProvider, SignInButton, UserButton, useAuth, useUser } from '@clerk/react';
 import App from './App';
+import { IdentityContext } from './auth/Identity';
 import './styles.css';
-
-export interface Identity {
-  userId: string | null;
-  loaded: boolean;
-  getToken: () => Promise<string | null>;
-  controls: React.ReactNode;
-}
-const IdentityContext = createContext<Identity>({
-  userId: null,
-  loaded: true,
-  getToken: async () => null,
-  controls: null,
-});
-export const useIdentity = () => useContext(IdentityContext);
 
 function ConnectedApp() {
   const { userId, isLoaded, getToken } = useAuth();

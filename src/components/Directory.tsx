@@ -12,7 +12,7 @@ import {
   Trash2,
   Users,
 } from 'lucide-react';
-import { useIdentity } from '../main';
+import { useIdentity } from '../auth/Identity';
 import { words, type Lang } from '../i18n';
 import type { APEntry } from '../lib/types';
 

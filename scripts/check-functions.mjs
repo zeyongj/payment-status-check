@@ -10,7 +10,7 @@ async function loadFunction(name) {
   return import(pathToFileURL(resolve(directory, config.handler)).href);
 }
 const [config, admin, admins] = await Promise.all(['config', 'admin', 'admins'].map(loadFunction));
-const anonymous = await admin.GET(new Request('https://invoice-check.vercel.app/api/admin'));
+const anonymous = await admin.GET(new Request('https://invoice-check-chi.vercel.app/api/admin'));
 assert.equal(anonymous.status, 200);
 assert.deepEqual(await anonymous.json(), {
   role: 'visitor',
@@ -19,14 +19,14 @@ assert.deepEqual(await anonymous.json(), {
   canManageAdmins: false,
 });
 const privateDirectory = await config.GET(
-  new Request('https://invoice-check.vercel.app/api/config'),
+  new Request('https://invoice-check-chi.vercel.app/api/config'),
 );
 assert.equal(privateDirectory.status, 401);
 assert.equal((await privateDirectory.json()).error.code, 'unauthorized');
-const roster = await admins.GET(new Request('https://invoice-check.vercel.app/api/admins'));
+const roster = await admins.GET(new Request('https://invoice-check-chi.vercel.app/api/admins'));
 assert.equal(roster.status, 401);
 const grant = await admins.POST(
-  new Request('https://invoice-check.vercel.app/api/admins', {
+  new Request('https://invoice-check-chi.vercel.app/api/admins', {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify({ revision: 'initial', action: 'grant', email: 'untrusted@example.test' }),
@@ -34,7 +34,7 @@ const grant = await admins.POST(
 );
 assert.equal(grant.status, 401);
 const mutation = await config.PUT(
-  new Request('https://invoice-check.vercel.app/api/config', {
+  new Request('https://invoice-check-chi.vercel.app/api/config', {
     method: 'PUT',
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify({ revision: 'initial', config: { ap: [], pm: {} } }),
