@@ -176,16 +176,27 @@ export function reconcile(
     let candidates: MatchCandidate[] = [];
     let reason = '';
     let fuzzyAuto = false;
-    if (!records.length && settings.splitProjects && key) {
+    if (settings.splitProjects && key) {
       const base = splitInvoice(key);
-      records = (splitIndex.get(base.invoice) ?? []).filter(
-        (r) =>
-          context(r) &&
-          (!base.project ||
-            splitInvoice(normalizeInvoice(r.invoice, settings)).project === base.project ||
-            r.project.toUpperCase() === base.project.toUpperCase()),
-      );
-      if (records.length) method = 'project-suffix';
+      const components = (splitIndex.get(base.invoice) ?? []).filter((record) => {
+        if (!context(record)) return false;
+        const suffix = splitInvoice(normalizeInvoice(record.invoice, settings)).project;
+        const project = record.project || suffix;
+        return (
+          !requestProject || !project || project.toUpperCase() === requestProject.toUpperCase()
+        );
+      });
+      if (components.length) {
+        records = components;
+        if (
+          base.project ||
+          components.some(
+            (record) => splitInvoice(normalizeInvoice(record.invoice, settings)).project,
+          )
+        ) {
+          method = 'project-suffix';
+        }
+      }
     }
     if (!records.length && template && key) {
       records = (
@@ -245,6 +256,7 @@ export function reconcile(
         const topCandidates = candidates.filter((c) => c.score === best.score);
         fuzzyAuto =
           settings.autoAcceptFuzzy &&
+          (!next || best.score > next.score) &&
           (!next || best.score - next.score >= margin) &&
           !ambiguity(topCandidates, 'fuzzy');
         reason = fuzzyAuto

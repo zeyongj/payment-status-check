@@ -221,6 +221,29 @@ describe('reconciliation and audit', () => {
     expect(result.resolution).toBe('review');
     expect(result.candidates).toHaveLength(2);
   });
+  it('includes suffixed split components even when an exact parent invoice exists', () => {
+    const source = [
+      record('INV-A', { project: '100', status: 'PAID' }),
+      record('INV-A [101]', { project: '101', stage: 'PM' }),
+    ];
+    const result = reconcile([record('INV-A')], source)[0];
+    expect(result.method).toBe('project-suffix');
+    expect(result.resolution).toBe('review');
+    expect(result.candidates.map((candidate) => candidate.record.project)).toEqual(['100', '101']);
+    const constrained = reconcile([record('INV-A', { project: '100' })], source)[0];
+    expect(constrained.resolution).toBe('matched');
+    expect(constrained.candidates.map((candidate) => candidate.record.project)).toEqual(['100']);
+    const suffixOnlyContext = reconcile(
+      [record('INV-A', { project: '100' })],
+      [source[0], record('INV-A [101]', { stage: 'PM' })],
+    )[0];
+    expect(suffixOnlyContext.candidates).toHaveLength(1);
+    const conflictingSource = reconcile(
+      [record('INV-A')],
+      [record('INV-A [100]', { project: '101', status: 'PAID' })],
+    )[0];
+    expect(conflictingSource.resolution).toBe('review');
+  });
   it('honors a request project and custom AP/PM ownership', () => {
     const result = reconcile(
       [record('123', { project: '120' })],
@@ -263,6 +286,20 @@ describe('reconciliation and audit', () => {
     expect(results[0].candidates).toHaveLength(2);
     expect(buildSummary(results, 'external', { '1234567': [] })[0].Status).toBe('Missing');
     expect(editDistance('kitten', 'sitting', 3)).toBe(3);
+  });
+  it('requires a unique best fuzzy key even when the runner-up margin is zero', () => {
+    const result = reconcile(
+      [record('FUZZY-100')],
+      [
+        record('FUZZY-101', { project: '100', status: 'PAID' }),
+        record('FUZZY-102', { project: '100', status: 'PAID' }),
+      ],
+      settings({ fuzzyThreshold: 80, fuzzyMargin: 0, autoAcceptFuzzy: true }),
+    )[0];
+    expect(result.method).toBe('fuzzy');
+    expect(result.resolution).toBe('review');
+    expect(result.candidates).toHaveLength(2);
+    expect(result.accepted).toHaveLength(0);
   });
   it('checks the fuzzy runner-up even when it is below the acceptance threshold', () => {
     const invoice = '1234567890123456789012345';
