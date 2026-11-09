@@ -86,6 +86,45 @@ describe('CSV and Excel ingestion', () => {
     expect(extracted.records[0].invoice).toBe('000012');
     expect(extracted.records[0].notes).toBe('first\nsecond');
   });
+  it.each(['csv', 'xlsx'] as const)(
+    'preserves RM project identifiers from company and invoice suffix in %s files',
+    (format) => {
+      const sheet = XLSX.utils.aoa_to_sheet([
+        ['Company', 'Invoice No', 'Status'],
+        ['[RM9991] Example rental company', 'RENT-TEST-01', 'PAID'],
+        ['Example rental company', 'RENT-TEST-02 [RM9991]', 'PAID'],
+        ['[RM9991] Example rental company', 'RENT-TEST-03 [RM9992]', 'PAID'],
+      ]);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, sheet, 'Sheet1');
+      const bytes =
+        format === 'csv'
+          ? new TextEncoder().encode(XLSX.utils.sheet_to_csv(sheet))
+          : new Uint8Array(XLSX.write(workbook, { type: 'array', bookType: 'xlsx' }));
+      const file = parseBytes(bytes, `rentals.${format}`);
+      const source = extractRecords(
+        file,
+        { Sheet1: suggestMapping(file.sheets[0]) },
+        'system',
+      ).records;
+      expect(source.map((row) => row.project)).toEqual(['RM9991', 'RM9991', 'RM9991']);
+      const results = reconcile(
+        ['RENT-TEST-01', 'RENT-TEST-02', 'RENT-TEST-03'].map((invoice) => record(invoice)),
+        source,
+        settings({
+          ap: [{ Name: 'Example AP', Portfolio: '1+', Include: '', Exclude: '' }],
+          pm: {},
+        }),
+      );
+      expect(results[0].project).toBe('RM9991');
+      expect(results[0].status).toBe('PAID');
+      expect(results[0].ap).toBe('');
+      expect(results[1].resolution).toBe('matched');
+      expect(results[1].project).toBe('RM9991');
+      expect(results[2].resolution).toBe('review');
+      expect(results[2].reason).toContain('suffix conflicts');
+    },
+  );
   it.each(['xlsx', 'xls'] as const)('reads %s workbooks and every worksheet', (bookType) => {
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(

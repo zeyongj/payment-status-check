@@ -10,6 +10,11 @@ export function externalStatus(status: string): string {
   return status;
 }
 
+function summaryOwner(project: string, name: string | undefined): string {
+  if (name?.trim()) return name;
+  return /^RM\d+$/i.test(project.trim()) ? '-' : (name ?? '');
+}
+
 export function buildSummary(
   results: MatchResult[],
   kind: 'internal' | 'external',
@@ -46,8 +51,8 @@ export function buildSummary(
       if (kind === 'internal')
         Object.assign(row, {
           'Project number': result.request.project,
-          'AP name': result.ap,
-          'PM name': result.pm,
+          'AP name': summaryOwner(result.request.project, result.ap),
+          'PM name': summaryOwner(result.request.project, result.pm),
           'Original stage': '',
           'Original status': '',
           'Matched invoice': '',
@@ -80,8 +85,14 @@ export function buildSummary(
       if (kind === 'internal')
         Object.assign(row, {
           'Project number': record.project || result.request.project,
-          'AP name': candidate.ap ?? assignAP(record.project),
-          'PM name': candidate.pm ?? DEFAULT_PM[record.project] ?? '',
+          'AP name': summaryOwner(
+            record.project || result.request.project,
+            candidate.ap ?? assignAP(record.project),
+          ),
+          'PM name': summaryOwner(
+            record.project || result.request.project,
+            candidate.pm ?? DEFAULT_PM[record.project],
+          ),
           'Original stage': record.stage,
           'Original status': record.status,
           'Matched invoice': record.invoice,
@@ -103,6 +114,7 @@ export function buildSummary(
 export function safeCell(value: string | number | undefined): string | number {
   if (typeof value === 'number') return value;
   const text = value ?? '';
+  if (text === '-') return text;
   return /^[\s\u0000-\u001f]*[=+@-]/.test(text) ? `'${text}` : text;
 }
 
