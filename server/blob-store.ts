@@ -9,7 +9,7 @@ import {
 } from './config.js';
 
 // Isolated from AP Count even when the same private store is connected.
-export const CONFIG_PATH = 'invoice-check/config-v1.json';
+export const CONFIG_PATH = 'payment-status-check/config-v1.json';
 const strongETag = (value: string) => /^"[\x21\x23-\x7e\x80-\xff]+"$/.test(value);
 export function createBlobStore(env: NodeJS.ProcessEnv = process.env): ConfigStore {
   function options() {

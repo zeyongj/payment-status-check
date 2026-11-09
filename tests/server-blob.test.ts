@@ -37,7 +37,7 @@ describe('private Blob conditional directory storage', () => {
         headers: { 'accept-encoding': 'identity' },
       }),
     );
-    expect(CONFIG_PATH).toBe('invoice-check/config-v1.json');
+    expect(CONFIG_PATH).toBe('payment-status-check/config-v1.json');
   });
   it('rejects a weak read revision instead of allowing a non-atomic overwrite', async () => {
     vi.mocked(get).mockResolvedValue(response('W/"rev-1"'));

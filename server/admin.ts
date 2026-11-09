@@ -19,14 +19,14 @@ export function verifiedPrimaryEmail(user: ClerkUser): string | null {
   return primary?.verification?.status === 'verified' ? normalizeEmail(primary.emailAddress) : null;
 }
 export const ownerEmail = (env: NodeJS.ProcessEnv) =>
-  env.INVOICE_CHECK_ADMIN_EMAIL ?? env.AP_COUNT_ADMIN_EMAIL;
+  env.PAYMENT_STATUS_CHECK_ADMIN_EMAIL ?? env.AP_COUNT_ADMIN_EMAIL;
 export function isBootstrapOwner(user: ClerkUser, env: NodeJS.ProcessEnv): boolean {
   if (user.banned || user.locked) return false;
   const email = verifiedPrimaryEmail(user);
   const emailOwner = Boolean(
     email && ownerEmail(env)?.trim() && email === normalizeEmail(ownerEmail(env)!),
   );
-  const githubId = env.INVOICE_CHECK_OWNER_GITHUB_ID?.trim();
+  const githubId = env.PAYMENT_STATUS_CHECK_OWNER_GITHUB_ID?.trim();
   // Compare a trusted provider's immutable user ID, never a mutable username or client claim.
   const githubOwner = Boolean(
     githubId &&
@@ -42,9 +42,9 @@ export function isBootstrapOwner(user: ClerkUser, env: NodeJS.ProcessEnv): boole
 }
 export function authorizedOrigins(env: NodeJS.ProcessEnv): string[] {
   const origins = new Set<string>();
-  if (env.INVOICE_CHECK_ORIGIN) {
+  if (env.PAYMENT_STATUS_CHECK_ORIGIN) {
     try {
-      const url = new URL(env.INVOICE_CHECK_ORIGIN);
+      const url = new URL(env.PAYMENT_STATUS_CHECK_ORIGIN);
       if (url.protocol === 'https:') origins.add(url.origin);
     } catch {
       /* Invalid deployment settings fail closed. */
@@ -63,7 +63,7 @@ function clerkClient(env: NodeJS.ProcessEnv) {
   if (
     !env.CLERK_SECRET_KEY ||
     !env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ||
-    (!ownerEmail(env)?.trim() && !/^\d+$/.test(env.INVOICE_CHECK_OWNER_GITHUB_ID ?? ''))
+    (!ownerEmail(env)?.trim() && !/^\d+$/.test(env.PAYMENT_STATUS_CHECK_OWNER_GITHUB_ID ?? ''))
   )
     throw new Error('Administrator authentication is not configured.');
   return createClerkClient({
@@ -96,7 +96,7 @@ export function createAuthorizer(env: NodeJS.ProcessEnv = process.env) {
     const user = await client.users.getUser(auth.userId);
     const email = verifiedPrimaryEmail(user);
     const isOwner = isBootstrapOwner(user, env);
-    const actorEmail = email ?? (isOwner ? `github:${env.INVOICE_CHECK_OWNER_GITHUB_ID}` : null);
+    const actorEmail = email ?? (isOwner ? `github:${env.PAYMENT_STATUS_CHECK_OWNER_GITHUB_ID}` : null);
     return {
       signedIn: true,
       isOwner,

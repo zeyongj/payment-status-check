@@ -8,6 +8,6 @@ export function productionHandlers() {
     authorize: createAuthorizer(),
     lookupAdministrator: createAdministratorLookup(),
     ownerEmail: ownerEmail(process.env),
-    reportFailure: (operation) => console.error(`[Invoice Check] ${operation} failed.`),
+    reportFailure: (operation) => console.error(`[Payment Status Check] ${operation} failed.`),
   });
 }

@@ -301,47 +301,47 @@ describe('trusted Owner identity', () => {
     ],
   };
   it('requires a verified primary email for email ownership', () => {
-    expect(isBootstrapOwner(user, { INVOICE_CHECK_ADMIN_EMAIL: 'OWNER@EXAMPLE.TEST' })).toBe(true);
+    expect(isBootstrapOwner(user, { PAYMENT_STATUS_CHECK_ADMIN_EMAIL: 'OWNER@EXAMPLE.TEST' })).toBe(true);
     expect(
       isBootstrapOwner(
         {
           ...user,
           emailAddresses: [{ ...user.emailAddresses[0], verification: { status: 'unverified' } }],
         },
-        { INVOICE_CHECK_ADMIN_EMAIL: 'owner@example.test' },
+        { PAYMENT_STATUS_CHECK_ADMIN_EMAIL: 'owner@example.test' },
       ),
     ).toBe(false);
   });
   it('accepts only the verified immutable GitHub ID', () => {
-    expect(isBootstrapOwner(user, { INVOICE_CHECK_OWNER_GITHUB_ID: '123456' })).toBe(true);
-    expect(isBootstrapOwner(user, { INVOICE_CHECK_OWNER_GITHUB_ID: 'different' })).toBe(false);
+    expect(isBootstrapOwner(user, { PAYMENT_STATUS_CHECK_OWNER_GITHUB_ID: '123456' })).toBe(true);
+    expect(isBootstrapOwner(user, { PAYMENT_STATUS_CHECK_OWNER_GITHUB_ID: 'different' })).toBe(false);
     expect(
       isBootstrapOwner(
         { ...user, externalAccounts: [{ ...user.externalAccounts[0], verification: null }] },
-        { INVOICE_CHECK_OWNER_GITHUB_ID: '123456' },
+        { PAYMENT_STATUS_CHECK_OWNER_GITHUB_ID: '123456' },
       ),
     ).toBe(false);
     expect(
       isBootstrapOwner(
         { ...user, externalAccounts: [{ ...user.externalAccounts[0], provider: 'oauth_google' }] },
-        { INVOICE_CHECK_OWNER_GITHUB_ID: '123456' },
+        { PAYMENT_STATUS_CHECK_OWNER_GITHUB_ID: '123456' },
       ),
     ).toBe(false);
   });
   it('denies locked/banned users regardless of linked identity', () => {
     expect(verifiedPrimaryEmail({ ...user, banned: true })).toBeNull();
     expect(
-      isBootstrapOwner({ ...user, locked: true }, { INVOICE_CHECK_OWNER_GITHUB_ID: '123456' }),
+      isBootstrapOwner({ ...user, locked: true }, { PAYMENT_STATUS_CHECK_OWNER_GITHUB_ID: '123456' }),
     ).toBe(false);
   });
   it('pins production authorized origins without accepting wildcards', () => {
     expect(
       authorizedOrigins({
         NODE_ENV: 'production',
-        INVOICE_CHECK_ORIGIN: 'https://invoice-check.vercel.app/path',
+        PAYMENT_STATUS_CHECK_ORIGIN: 'https://payment-status-check.vercel.app/path',
         VERCEL_URL: 'preview.example.evil',
       }),
-    ).toEqual(['https://invoice-check.vercel.app']);
+    ).toEqual(['https://payment-status-check.vercel.app']);
     expect(authorizedOrigins({ NODE_ENV: 'production' })).toEqual([]);
   });
 });

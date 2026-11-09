@@ -1,5 +1,5 @@
 {
-  "name": "invoice-check",
+  "name": "payment-status-check",
   "version": "1.0.0",
   "private": true,
   "type": "module",
