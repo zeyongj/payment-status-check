@@ -227,15 +227,26 @@ export default function App() {
     [statement, options],
   );
   const systemExtract = useMemo(() => recordsFrom(system, 'system', options), [system, options]);
-  const rows = useMemo(() => buildSummary(results, view, selections), [results, view, selections]);
+  const internalRows = useMemo(
+    () => buildSummary(results, 'internal', selections),
+    [results, selections],
+  );
+  const rows = useMemo(
+    () => (view === 'internal' ? internalRows : buildSummary(results, 'external', selections)),
+    [results, view, selections, internalRows],
+  );
   const filteredRows = useMemo(
     () =>
       rows.filter(
-        (row) =>
+        (row, index) =>
           (!statusFilter || row.Status === statusFilter) &&
-          (!search || Object.values(row).join(' ').toLowerCase().includes(search.toLowerCase())),
+          (!search ||
+            [...Object.values(row), internalRows[index]?.['Project number'] ?? '']
+              .join(' ')
+              .toLowerCase()
+              .includes(search.toLowerCase())),
       ),
-    [rows, search, statusFilter],
+    [rows, search, statusFilter, internalRows],
   );
   const statuses = useMemo(() => [...new Set(rows.map((r) => r.Status))].sort(), [rows]);
   const pageCount = Math.max(1, Math.ceil(filteredRows.length / 50));
@@ -909,9 +920,7 @@ export default function App() {
                       <thead>
                         <tr>
                           <th>{t.invoice}</th>
-                          {(view === 'internal' || rows.some((r) => r['Project number'])) && (
-                            <th>{t.project}</th>
-                          )}
+                          {view === 'internal' && <th>{t.project}</th>}
                           <th>{view === 'internal' ? `${t.internal} · ${t.status}` : t.status}</th>
                           {view === 'internal' && (
                             <>
@@ -939,7 +948,7 @@ export default function App() {
                           .map((row, index) => (
                             <tr key={`${index}-${tablePage}`}>
                               <td className="invoice-cell">{row.Invoice}</td>
-                              {(view === 'internal' || rows.some((r) => r['Project number'])) && (
+                              {view === 'internal' && (
                                 <td className="mono">{row['Project number'] || '—'}</td>
                               )}
                               <td>

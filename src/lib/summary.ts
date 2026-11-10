@@ -44,7 +44,7 @@ export function buildSummary(
           : '';
       const row: SummaryRow = {
         Invoice: result.request.invoice,
-        'Project number': result.request.project,
+        ...(kind === 'internal' ? { 'Project number': result.request.project } : {}),
         Status: status,
         Notes: auditNotes,
       };
@@ -78,7 +78,9 @@ export function buildSummary(
       const notes = [...new Set([result.request.notes, record.notes].filter(Boolean))].join('\n');
       const row: SummaryRow = {
         Invoice: result.request.invoice,
-        'Project number': record.project || result.request.project,
+        ...(kind === 'internal'
+          ? { 'Project number': record.project || result.request.project }
+          : {}),
         Status: kind === 'external' ? externalStatus(status) : status,
         Notes: kind === 'internal' ? notes : status.toUpperCase() === 'SCAN' ? record.notes : '',
       };

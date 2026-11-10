@@ -25,7 +25,7 @@
 | Found row without stage/status | Unknown | Unknown |
 | Unconfirmed candidate/conflict | Needs review with labelled candidate notes | Needs review, no notes |
 
-Internal output includes project, AP, PM, original stage/status, matched invoice, rule, score and source references. External output excludes staff names, audit fields and non-SCAN notes. Source stage takes precedence over source status, matching the original workflow; both fields remain in the internal audit columns.
+Internal output includes project, AP, PM, original stage/status, matched invoice, rule, score and source references. External output contains only Invoice, Status and Notes; project numbers, staff names and audit fields are excluded, and only SCAN source notes are shared. Source stage takes precedence over source status, matching the original workflow; both fields remain in the internal audit columns.
 
 ### File compatibility
 
@@ -46,7 +46,7 @@ The parser recognizes repeated headers, totals and common statement layouts. It 
 9. **团队分配**只向获授权的登录账号展示 AP 和 PM 负责人。viewer 仅可查看，owner/admin 可保存修改，只有 owner 可授予或撤销查看/管理权限。注册新账号本身不授予目录访问。使用与 AP Count 相同的 Clerk 账号登录。遇到并发版本冲突时，草稿会保留；确认可替换草稿后再刷新。
 10. **清空工作空间**会清除内存中的发票文件、结果及复核决定。关闭标签页前请先下载；浏览器只持久保存语言偏好。
 
-内部版保留原始状态和全部备注，并增加项目、AP、PM、原始 Stage/Status、匹配号码、规则、分数及来源。外部版将 AP/APPROVED 改为 **Approved for payment**，将 Site A/Site B/PM/SRPM/SCAN 改为 **Pending Approval**，仅保留 SCAN 来源备注；其他状态保持原文。应用不生成邮件或 TXT，也不承诺付款日期。
+内部版保留原始状态和全部备注，并增加项目、AP、PM、原始 Stage/Status、匹配号码、规则、分数及来源。外部版将 AP/APPROVED 改为 **Approved for payment**，将 Site A/Site B/PM/SRPM/SCAN 改为 **Pending Approval**，仅保留 SCAN 来源备注；其他状态保持原文。外部版仅包含发票号码、状态及备注，不包含项目编号。应用不生成邮件或 TXT，也不承诺付款日期。
 
 CSV 编码与运行 Python 的操作系统无关。附件中的 Mac Roman 不换行空格导致 UTF-8 解码失败。每份 CSV 均可独立选择编码；仅凭一个特殊字符无法保证推断正确，出现编码提示时请核对预览。
 

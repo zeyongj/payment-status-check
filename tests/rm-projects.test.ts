@@ -50,7 +50,8 @@ describe('RM project summaries', () => {
       Status: 'PAID',
     });
     const external = buildSummary(results, 'external')[0];
-    expect(external).toMatchObject({ 'Project number': 'RM9991', Status: 'PAID' });
+    expect(external).toMatchObject({ Status: 'PAID' });
+    expect(external).not.toHaveProperty('Project number');
     expect(external).not.toHaveProperty('AP name');
     expect(external).not.toHaveProperty('PM name');
   });

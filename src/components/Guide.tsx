@@ -46,7 +46,7 @@ export function Guide({ lang }: { lang: Lang }) {
             title: '5. Export internal and external summaries',
             text: 'Both versions are visible in the Payment summaries page and can be downloaded as UTF-8 CSV or Excel. Download includes all rows, even when the table is filtered. No external email or TXT file is generated.',
             details:
-              'Internal: stage takes precedence over status, while both original values and all notes remain in the audit columns. Project number, AP name and PM name are included. External: AP / APPROVED become Approved for payment; Site A / Site B / PM / SRPM / SCAN become Pending Approval. SCAN source notes remain; other notes are removed. PAID, IN-PAYABLE and other statuses keep their source wording. Split components retain their project numbers. The app makes no promise about a payment date or check run.',
+              'Internal: stage takes precedence over status, while both original values and all notes remain in the audit columns. Project number, AP name and PM name are included. External: AP / APPROVED become Approved for payment; Site A / Site B / PM / SRPM / SCAN become Pending Approval. SCAN source notes remain; other notes are removed. PAID, IN-PAYABLE and other statuses keep their source wording. Split components remain separate rows; project numbers appear only in the internal summary. The app makes no promise about a payment date or check run.',
           },
           {
             icon: Users,
@@ -90,7 +90,7 @@ export function Guide({ lang }: { lang: Lang }) {
             title: '5. 查看及下载两种汇总',
             text: '“付款状态汇总”中可查看内部及外部版本，支持 UTF-8 CSV 和 Excel 下载；下载始终包含全部记录，不受页面筛选影响。不生成邮件或 TXT 文件。',
             details:
-              '内部版优先使用 Stage，再使用 Status，同时在审计列保留两者原值及全部备注，并增加 Project number、AP name、PM name。外部版：AP / APPROVED 转为 Approved for payment；Site A / Site B / PM / SRPM / SCAN 转为 Pending Approval；只保留 SCAN 的来源备注，移除其余备注。PAID、IN-PAYABLE 及其他状态保留原文，拆分记录保留项目编号。应用不会承诺付款日期或支票批次。',
+              '内部版优先使用 Stage，再使用 Status，同时在审计列保留两者原值及全部备注，并增加 Project number、AP name、PM name。外部版：AP / APPROVED 转为 Approved for payment；Site A / Site B / PM / SRPM / SCAN 转为 Pending Approval；只保留 SCAN 的来源备注，移除其余备注。PAID、IN-PAYABLE 及其他状态保留原文，拆分记录仍分别保留。外部版只包含发票号码、状态与备注，项目编号仅在内部版显示。应用不会承诺付款日期或支票批次。',
           },
           {
             icon: Users,
