@@ -217,6 +217,12 @@ function projectFrom(value: string): string {
   );
 }
 
+function projectFromInvoice(value: string): string {
+  // An invoice number is not a project code. Only an explicit bracket suffix
+  // supplies project context; bare numeric IDs must remain unconstrained.
+  return clean(value).match(/^.+?\s*\[([\w-]+)\]\.?$/)?.[1] ?? '';
+}
+
 export function extractRecords(
   file: ParsedFile,
   mappings: Record<string, ColumnMapping>,
@@ -313,7 +319,7 @@ export function extractRecords(
           projectFrom(project) ||
           project ||
           projectFrom(company) ||
-          projectFrom(invoice) ||
+          projectFromInvoice(invoice) ||
           (kind === 'statement' ? contextProject : ''),
         company: company || (kind === 'statement' ? contextCompany : ''),
         vendor: get(mapping.vendor),
